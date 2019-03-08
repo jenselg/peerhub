@@ -1,0 +1,14 @@
+.nav-link, .list-group-item {
+  font-size: 12px;
+  border-radius: 0 !important;
+}
+
+[class^="col-"], .col {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
