@@ -1,26 +1,26 @@
 {
-  "name": "electron-quick-start",
+  "name": "Peer Hub",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Decentralized and encrypted P2P chat application based on IPFS, Node.js, and Electron.js.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "compile": "browserify source.js --standalone IPFSLib > js/compiledlibs.js"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/jenselg/peerhub",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "IPFS",
+    "Encrypted",
+    "P2P",
+    "Chat"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Jensel Gatchalian",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^4.0.4"
   },
   "dependencies": {
+    "cryptiles": ">=4.1.2",
     "bootstrap": "^4.3.1",
     "browserify": "^16.2.3",
     "electron-store": "^2.0.0",
