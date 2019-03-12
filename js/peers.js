@@ -1,7 +1,5 @@
-// TODO
-// setup electron-store for multiple channels
-// JSON tree for channel -> approved users
-
+const Store = require('electron-store')
+const store = new Store({ name: 'peerhub-peers' })
 
 var channel = (name) => {
   const Room = require('ipfs-pubsub-room')
@@ -16,6 +14,23 @@ var channel = (name) => {
   }
 }
 
+var channelPeerList = () => {
+  // load peer list from local store; fire a has peer on init
+  // on peer join and leave, update front-end
+}
+
+var initMessages = () => {
+  // load messages onto messages-container onClick of peer, from local store
+}
+
+var sendMessage = () => {
+  // append message to messages-container then send to peer; store in local store
+}
+
+var receiveMessage = () => {
+  // append message to messages-container; store in local store
+}
+
 var init = () => {
   mainChannel = channel('#peerhub-main-channel')
 
@@ -24,11 +39,6 @@ var init = () => {
   } else {
 
   }
-
-  console.log(mainChannel)
-
-
-
   ipfs.id(function (err, identity) {
   if (err) {
     throw err
