@@ -1,5 +1,6 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain } = require('electron')
+const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -8,13 +9,14 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1100,
+    width: 320,
     height: 600,
-    minWidth: 1100,
+    minWidth: 320,
     minHeight: 600,
-    maxWidth: 1100,
+    maxWidth: 320,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   })
 
@@ -57,3 +59,8 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+// Store peer id temporarily
+ipcMain.on( "peerId", ( event, data ) => {
+  global.peerId = data
+} );

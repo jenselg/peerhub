@@ -6,10 +6,6 @@ require("bootstrap")
 // Loading
 $("#main-window").load('./html/loading.html')
 
-// IPFS
-const IPFS = require('./js/ipfs.js')
-new IPFS.ipfsInstance()
-
 // UI
 $(window).ready(() => {
   ipfs.on('ready', (err, info) => {
