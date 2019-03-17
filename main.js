@@ -1,13 +1,9 @@
-// Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let peerWindow = {}
 
-function createWindow () {
-  // Create the browser window.
+function createMainWindow () {
   mainWindow = new BrowserWindow({
     width: 320,
     height: 600,
@@ -16,29 +12,67 @@ function createWindow () {
     maxWidth: 320,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload-main.js')
     }
   })
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
-
-  // Open the DevTools.
+  mainWindow.loadFile('main.html')
   mainWindow.webContents.openDevTools()
-
-  // Emitted when the window is closed.
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null
   })
 }
 
+function createPeerWindow (peerName, data) {
+  global.windowPeerId = peerName
+  peerWindow[peerName] = new BrowserWindow({
+    width: 640,
+    height: 480,
+    minWidth: 640,
+    minHeight: 480,
+    title: peerName,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      preload: path.join(__dirname, 'preload-peer.js')
+    }
+  })
+  peerWindow[peerName].loadFile('peer.html')
+  peerWindow[peerName].webContents.openDevTools()
+  peerWindow[peerName].on('closed', function () {
+    peerWindow[peerName] = null
+  })
+  if (data) {
+    peerWindow[peerName].once('ready-to-show', () => {
+      peerWindow[peerName].webContents.send('receiveMessage', data)
+    })
+  }
+}
+
+ipcMain.on('createPeerWindow', (event, peerName) => {
+  createPeerWindow(peerName)
+})
+
+ipcMain.on('windowReady', (event, bool) => {
+
+})
+
+ipcMain.on('receiveMessage', (event, data) => {
+  // Check if peer window exists, if not, make it
+  if (peerWindow[data.from]) {
+    peerWindow[data.from].webContents.send('receiveMessage', data)
+  } else {
+    createPeerWindow(data.from, data)
+  }
+})
+
+ipcMain.on('sendMessage', (event, data) => {
+  mainWindow.webContents.send('sendMessage', data)
+})
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createMainWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -53,14 +87,6 @@ app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    createMainWindow()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-// Store peer id temporarily
-ipcMain.on( "peerId", ( event, data ) => {
-  global.peerId = data
-} );
