@@ -1,6 +1,6 @@
 
     <!-- Tabs -->
-    <nav style="background: #616161;">
+    <nav id="nav-container" style="background: #616161;">
       <div class="nav nav-pills" role="tablist">
         <a class="nav-item nav-link active" id="nav-peers-tab" data-toggle="tab" href="#nav-peers" role="tab" aria-controls="nav-peers" aria-selected="true"><i class="fas fa-user"></i>&nbsp;&nbsp;&nbsp;Peers</a>
         <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab" aria-controls="nav-settings" aria-selected="false"><i class="fas fa-cog"></i>&nbsp;&nbsp;&nbsp;Settings</a>
@@ -15,21 +15,31 @@
 
 
     <!-- ID -->
-    <p class="clickable" style="position: absolute; display: block; bottom: 0; width: 100%; margin: 0; padding: 6px 5px; font-size: 9px; text-align: center; background: #424242; color: white;" id="ipfs-id"></p>
+    <p class="clickable" style="position: absolute; display: block; bottom: 0; width: 100%; margin: 0; padding: 6px 5px; font-size: 9px; text-align: center; background: #424242; color: white;" id="ipfs-id-container" onclick="copyToClipboard($(this))"></p>
 
 
 <!-- Load Tab Partials -->
 <script>
 
+  // function to copy ipfs id
+  function copyToClipboard(element) {
+    var $temp = $("<input>")
+    $("body").append($temp)
+    $temp.val($(element).text().replace(/\s/g, '')).select()
+    document.execCommand("copy")
+    $temp.remove()
+  }
+
   // load tab pages
   $("#nav-peers").load('./html/peers.html')
   $("#nav-settings").load('./html/settings.html')
 
+  // put ipfs id in bottom bar
   ipfs.id(function (err, identity) {
     if (err) {
       throw err
     } else {
-      $("#ipfs-id").html('<i class="fas fa-circle" style="color: #4CAF50;"></i>' + '&nbsp;&nbsp;&nbsp;' + identity.id)
+      $("#ipfs-id-container").html('<span id="ipfs-id">' + identity.id + '</span>' + '&nbsp;&nbsp;' + '<i class="fas fa-copy" style="color: #ffffff;"></i>')
     }
   })
 

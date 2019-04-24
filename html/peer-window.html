@@ -1,1 +1,26 @@
-peer window
+<script type="text/javascript">
+
+  // require libs
+  const { remote, ipcRenderer } = require('electron')
+  const windowId = remote.getCurrentWindow().id
+
+  // Capture init data when a user sends a message
+  var tempDataCapture = () => {
+    try {
+      var tempData = remote.getGlobal('tempData')[windowId]
+      console.log(JSON.stringify(tempData))
+      ipcRenderer.send('clearTempData', windowId)
+    } catch (err) {
+      console.log('No temp data!')
+    }
+  }
+
+  // call tempDataCapture()
+  tempDataCapture()
+
+  // listen for messages
+  ipcRenderer.on('receiveMessage', (event, data) => {
+      console.log(data)
+  })
+
+</script>

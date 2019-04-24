@@ -75,6 +75,7 @@ ipcMain.on('clearTempData', (event, id) => {
   global.tempData[id] = null
 })
 
+// called from IPFS calling on ipcRenderer, then relay to peer window by sending to ipcRenderer on peer window
 ipcMain.on('receiveMessage', (event, data) => {
   // Check if peer window exists, if not, make it
   if (peerWindow[data.from]) {
@@ -84,6 +85,7 @@ ipcMain.on('receiveMessage', (event, data) => {
   }
 })
 
+// called from ipcRenderer from peer window, relay to IPFS ipcRenderer
 ipcMain.on('sendMessage', (event, data) => {
   mainWindow.webContents.send('sendMessage', data)
 })
