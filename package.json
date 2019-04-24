@@ -17,7 +17,8 @@
   "author": "Jensel Gatchalian",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^4.0.4"
+    "electron": "^4.0.4",
+    "electron-reloader": "^0.2.0"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",

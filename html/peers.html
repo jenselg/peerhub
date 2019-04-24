@@ -1,16 +1,80 @@
-<p class="text-center" style="margin: 10px 0;"><span id="user-id"></span></p>
+<script type="text/javascript">
 
-<ul class="list-group">
-  <li id="open-window" class="list-group-item d-flex justify-content-between align-items-center">
-    Cras justo odio
-    <span class="badge badge-primary badge-pill">14</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between align-items-center">
-    Dapibus ac facilisis in
-    <span class="badge badge-primary badge-pill">2</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between align-items-center">
-    Morbi leo risus
-    <span class="badge badge-primary badge-pill">1</span>
-  </li>
-</ul>
+  // require ipcrenderer to open windows
+  const { ipcRenderer } = require('electron')
+
+  // require and init store
+  const Store = require('electron-store')
+  const store = new Store('peers')
+
+  // get list of peers from store
+  var peers = store.get('peers')
+
+  // message peer on click
+  var messagePeer = (element) => {
+    var peer = element.siblings(".peer-id").html()
+    ipcRenderer.send('createPeerWindow', peer)
+  }
+
+  // delete peer on click
+  var deletePeer = (element) => {
+    var peer = element.siblings(".peer-id").html()
+    peers.splice(peers.indexOf(peer), 1)
+    store.set('peers', peers)
+    element.parent().remove()
+  }
+
+  // add peer on click
+  var addPeer = (event) => {
+    event.preventDefault()
+    var peer = $("#peer-hash").val()
+    if (peer.substring(0, 2) == 'Qm') {
+      peers.push(peer)
+      store.set('peers', peers)
+      $("#peer-list").append(peerHtml(peer))
+      $("#peer-hash").val("")
+    } else {
+      alert("invalid peer hash")
+      $("#peer-hash").val("")
+    }
+  }
+
+  // build html for each peer
+  var peerHtml = (peer) => {
+    var output = ''
+    output += '<li class="list-group-item d-flex align-items-center">'
+      output += '<i class="fas fa-comment-dots clickable" style="color: #1976D2;" onclick="messagePeer($(this))"></i>'
+      output += '&nbsp;&nbsp;&nbsp;'
+      output += '<i class="fas fa-trash clickable" style="color: #d32f2f;" onclick="deletePeer($(this))"></i>'
+      output += '&nbsp;&nbsp;&nbsp;'
+      output += '<span class="peer-id">' + peer + '</span>'
+    output += '</li>'
+    return output
+  }
+
+  // check if store is empty or not, if it is, set an empty array
+  if (peers === undefined) {
+    store.set('peers', [])
+    console.log(peers)
+  } else {
+    peers.forEach((peer, index) => {
+      $("#peer-list").append(peerHtml(peer))
+    })
+  }
+
+</script>
+
+<div style="background: #424242; color: white; padding: 10px 0px; text-align: center; font-size: 11px;">
+  <form>
+    <div class="row align-items-center">
+      <div class="col-10">
+        <input id="peer-hash" type="text" class="form-control form-control-sm" placeholder="Peer Qm Hash" style="width: 96%; margin-left: auto; font-size: 10px;">
+      </div>
+      <div class="col-2">
+        <button type="submit" class="btn btn-sm btn-secondary" style="margin-right: auto; font-size: 10px;" onclick="addPeer(event)"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<ul id="peer-list" class="list-group"></ul>

@@ -1,5 +1,5 @@
 .nav-link, .list-group-item {
-  font-size: 12px;
+  font-size: 11px;
   border-radius: 0 !important;
 }
 
@@ -11,4 +11,12 @@
 .row {
   margin-left: 0;
   margin-right: 0;
+}
+
+.nav-pills .nav-link.active {
+  background:#424242;
+}
+
+a.nav-item.nav-link {
+  color: #BDBDBD;
 }

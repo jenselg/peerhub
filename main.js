@@ -1,5 +1,10 @@
 const {app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
+
+try {
+	require('electron-reloader')(module);
+} catch (err) {}
+
 let mainWindow
 let peerWindow = {}
 
@@ -23,7 +28,8 @@ function createMainWindow () {
 }
 
 function createPeerWindow (peerName, data) {
-  global.windowPeerId = peerName
+
+  // Create window
   peerWindow[peerName] = new BrowserWindow({
     width: 640,
     height: 480,
@@ -38,22 +44,35 @@ function createPeerWindow (peerName, data) {
   })
   peerWindow[peerName].loadFile('peer.html')
   peerWindow[peerName].webContents.openDevTools()
+
+  // Relay temp data to renderer if exists
+  if (data) {
+    if (global.tempData) {
+      global.tempData[peerWindow[peerName].id] = null
+      global.tempData[peerWindow[peerName].id] = data
+    } else {
+      global.tempData = {}
+      global.tempData[peerWindow[peerName].id] = null
+      global.tempData[peerWindow[peerName].id] = data
+    }
+  }
+
+  // Window events
   peerWindow[peerName].on('closed', function () {
     peerWindow[peerName] = null
   })
-  if (data) {
-    peerWindow[peerName].once('ready-to-show', () => {
-      peerWindow[peerName].webContents.send('receiveMessage', data)
-    })
-  }
+
 }
 
+// create peer window onclick from peers.html
 ipcMain.on('createPeerWindow', (event, peerName) => {
-  createPeerWindow(peerName)
+	if (!peerWindow[peerName]) {
+	  createPeerWindow(peerName)
+	}
 })
 
-ipcMain.on('windowReady', (event, bool) => {
-
+ipcMain.on('clearTempData', (event, id) => {
+  global.tempData[id] = null
 })
 
 ipcMain.on('receiveMessage', (event, data) => {
