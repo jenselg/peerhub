@@ -71,8 +71,14 @@ ipcMain.on('createPeerWindow', (event, peerName) => {
 	}
 })
 
+// clear temp data global
 ipcMain.on('clearTempData', (event, id) => {
   global.tempData[id] = null
+})
+
+// set ipfs id in global
+ipcMain.on('setIpfsId', (event, id) => {
+	global.ipfsId = id
 })
 
 // called from IPFS calling on ipcRenderer, then relay to peer window by sending to ipcRenderer on peer window

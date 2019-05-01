@@ -21,6 +21,9 @@
 <!-- Load Tab Partials -->
 <script>
 
+  // load libs
+  const { remote, ipcRenderer } = require('electron')
+
   // function to copy ipfs id
   function copyToClipboard(element) {
     var $temp = $("<input>")
@@ -34,11 +37,12 @@
   $("#nav-peers").load('./html/peers.html')
   $("#nav-settings").load('./html/settings.html')
 
-  // put ipfs id in bottom bar
+  // put ipfs id in bottom bar and in global var
   ipfs.id(function (err, identity) {
     if (err) {
       throw err
     } else {
+      ipcRenderer.send('setIpfsId', identity.id)
       $("#ipfs-id-container").html('<span id="ipfs-id">' + identity.id + '</span>' + '&nbsp;&nbsp;' + '<i class="fas fa-copy" style="color: #ffffff;"></i>')
     }
   })

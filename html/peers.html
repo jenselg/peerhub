@@ -2,9 +2,6 @@
 
   //** NON-JQUERY EVENTS **//
 
-  // require ipcrenderer to open windows
-  const { ipcRenderer } = require('electron')
-
   // require and init store
   const Store = require('electron-store')
   const store = new Store('peers')
@@ -43,7 +40,7 @@
 
   // build html for each peer
   var peerHtml = (peer) => {
-    var output = ''
+    let output = ''
     output += '<li class="list-group-item d-flex align-items-center">'
       output += '<i class="fas fa-comment-dots clickable" style="color: #6C757D;" onclick="messagePeer($(this))"></i>'
       output += '&nbsp;&nbsp;&nbsp;'
@@ -104,5 +101,5 @@
 </div>
 
 <div id="peer-list-container">
-  <ul id="peer-list" class="list-group"></ul>
+  <ul id="peer-list" class="list-group list-group-flush"></ul>
 </div>

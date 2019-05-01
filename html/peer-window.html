@@ -4,23 +4,109 @@
   const { remote, ipcRenderer } = require('electron')
   const windowId = remote.getCurrentWindow().id
 
-  // Capture init data when a user sends a message
+  // sanitize inputs
+  function stripHTML(dirtyString) {
+    var container = document.createElement('div');
+    var text = document.createTextNode(dirtyString);
+    container.appendChild(text);
+    return container.innerHTML; // innerHTML will be a xss safe string
+  }
+
+  // Capture init data when a user sends a message then clear it
   var tempDataCapture = () => {
     try {
       var tempData = remote.getGlobal('tempData')[windowId]
-      console.log(JSON.stringify(tempData))
+      $("#messages-container").append(buildReceiveMessage(tempData))
+      //console.log(tempData)
       ipcRenderer.send('clearTempData', windowId)
     } catch (err) {
       console.log('No temp data!')
     }
   }
 
+  // build receive message
+  var buildReceiveMessage = (input) => {
+    let output = ''
+    output += '<li class="list-group-item">'
+      output += '<strong>' + input['from'] + '</strong>' + ' says...' + '<br/>'
+      output += stripHTML(input['data'])
+    output += '</li>'
+    return output
+  }
+
+  // build send message
+  var buildSendMessage = (input) => {
+    let output = ''
+    output += '<li class="list-group-item">'
+      output += '<strong>' + input['from'] + '</strong>' + ' says...' + '<br/>'
+      output += stripHTML(input['data'])
+    output += '</li>'
+    return output
+  }
+
+  // get id
+  var ipfsId = remote.getGlobal('ipfsId')
+  console.log(ipfsId)
+
   // call tempDataCapture()
   tempDataCapture()
 
+  // scrolltop to messages height; each message is 50px
+  var scrollTopHeight = $("#messages-container").outerHeight()
+  var scrollTopHeightAdder = (px) => {
+    scrollTopHeight += px
+    return scrollTopHeight
+  }
+
   // listen for messages
   ipcRenderer.on('receiveMessage', (event, data) => {
-      console.log(data)
+      $("#messages-container").append(buildReceiveMessage(data))
+      $("#messages-container").animate({ scrollTop: scrollTopHeightAdder(250) }, "slow");
+      //console.log(data)
+  })
+
+  // return time in pretty format
+  var currentTime = () => {}
+
+  // jquery events
+  $(document).ready(() => {
+
+    // function to get height for peer list container
+    var setMessagesContainerHeight = () => {
+      let messagesContainerHeight = $(window).height() - $("#message-input-container").outerHeight()
+      $("#messages-container").height(messagesContainerHeight)
+    }
+
+    // init set peer list container height
+    setMessagesContainerHeight()
+
+    // window resize events
+    $(window).resize(() => {
+
+      // set peer list container height
+      setMessagesContainerHeight()
+
+    })
+
+    // send message logic
+    $("#message-input").on('keypress',function(e) {
+      if(e.which == 13) {
+        var data = {}
+        data['from'] = ipfsId
+        data['data'] = $("#message-input").val()
+        $("#messages-container").append(buildSendMessage(data))
+        $("#messages-container").animate({ scrollTop: scrollTopHeightAdder(50) }, "slow");
+        ipcRenderer.send('sendMessage', $("#message-input").val())
+        $("#message-input").val('')
+      }
+    })
+
   })
 
 </script>
+
+<ul id="messages-container" class="list-group list-group-flush" style="overflow-y: scroll;"></ul>
+
+<div id="message-input-container" style="position: absolute; display: block; bottom: 0; width: 100%; margin: 0; padding: 6px 5px; font-size: 9px; text-align: center; background: #424242; color: white;">
+  <input type="text" id="message-input" class="form-control form-control-sm" placeholder="Message..." />
+</div>
