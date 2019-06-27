@@ -56,9 +56,9 @@
   var peerHtml = (peer) => {
     let output = ''
     output += '<li class="list-group-item d-flex align-items-center">'
-      output += '<i class="fas fa-comment-dots clickable" style="color: #6C757D;" onclick="messagePeer($(this))"></i>'
+      output += '<i class="fas fa-comment-dots clickable text-primary" onclick="messagePeer($(this))"></i>'
       output += '&nbsp;&nbsp;&nbsp;'
-      output += '<i class="fas fa-trash clickable" style="color: #6C757D;" onclick="deletePeer($(this))"></i>'
+      output += '<i class="fas fa-trash clickable text-danger" onclick="deletePeer($(this))"></i>'
       output += '&nbsp;&nbsp;&nbsp;'
       output += '<span class="peer-id">' + peer + '</span>'
     output += '</li>'
@@ -108,7 +108,7 @@
         <input id="peer-hash" type="text" class="form-control form-control-sm" placeholder="Peer Qm Hash" style="width: 96%; margin-left: auto; font-size: 10px;">
       </div>
       <div class="col-2">
-        <button type="submit" class="btn btn-sm btn-secondary" style="margin-right: auto; font-size: 10px;" onclick="addPeer(event)"><i class="fas fa-plus"></i></button>
+        <button type="submit" class="btn btn-sm btn-success" style="margin-right: auto; font-size: 10px;" onclick="addPeer(event)"><i class="fas fa-plus"></i></button>
       </div>
     </div>
   </form>

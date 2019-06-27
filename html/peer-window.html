@@ -23,12 +23,6 @@
 
   // build receive message
   var buildReceiveMessage = (input) => {
-    // let output = ''
-    // output += '<li class="list-group-item">'
-    //   output += '<strong>' + input['from'] + '</strong>' + ' says...' + '<br/>'
-    //   output += stripHTML(input['data'])
-    // output += '</li>'
-    // return output
     let output = ''
     output += '<li class="list-group-item">'
       output += '<div class="float-left">'
@@ -42,12 +36,6 @@
 
   // build send message
   var buildSendMessage = (input) => {
-    // let output = ''
-    // output += '<li class="list-group-item">'
-    //   output += '<strong>' + ipfsId + '</strong>' + ' says...' + '<br/>'
-    //   output += stripHTML(input['data'])
-    // output += '</li>'
-    // return output
     let output = ''
     output += '<li class="list-group-item">'
       output += '<div class="float-right" style="text-align: right;">'
@@ -92,12 +80,23 @@
       //console.log(data)
   })
 
+  // copy to clipboard
+  function copyToClipboard(element) {
+    var $temp = $("<input>")
+    $("body").append($temp)
+    $temp.val($(element).text().replace(/\s/g, '')).select()
+    document.execCommand("copy")
+    $temp.remove()
+  }
+
   // jquery events
   $(document).ready(() => {
 
+    $("#peer-ipfs-id").text(peerIpfsId)
+
     // function to get height for peer list container
     var setMessagesContainerHeight = () => {
-      let messagesContainerHeight = $(window).height() - $("#message-input-container").outerHeight()
+      let messagesContainerHeight = $(window).height() - $("#message-input-container").outerHeight() - $("#peer-id-container").outerHeight()
       $("#messages-container").height(messagesContainerHeight)
     }
 
@@ -114,7 +113,7 @@
 
     // send message logic
     $("#message-input").on('keypress',function(e) {
-      if(e.which == 13) {
+      if(e.which == 13 && $("#message-input").val().length > 0) {
         var data = {}
         data['to'] = peerIpfsId
         data['data'] = $("#message-input").val()
@@ -126,9 +125,15 @@
       }
     })
 
+
+
   })
 
 </script>
+
+<div id="peer-id-container" style="display: block; width: 100%; margin: 0; padding: 6px 5px; font-size: 9px; text-align: center; background: #424242; color: white;">
+  <p style="margin: 0;" class="clickable"><span id="peer-ipfs-id" onclick="copyToClipboard($(this))"></span>&nbsp;&nbsp;<i class="fas fa-copy text-warning" onclick='copyToClipboard($("#peer-ipfs-id"))'></i></p>
+</div>
 
 <ul id="messages-container" class="list-group list-group-flush" style="overflow-y: scroll;"></ul>
 

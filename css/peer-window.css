@@ -1,3 +1,7 @@
 .list-group-item {
   border: 0;
 }
+
+.clickable {
+  cursor: pointer;
+}

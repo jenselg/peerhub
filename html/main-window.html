@@ -43,7 +43,7 @@
       throw err
     } else {
       ipcRenderer.send('setIpfsId', identity.id)
-      $("#ipfs-id-container").html('<span id="ipfs-id">' + identity.id + '</span>' + '&nbsp;&nbsp;' + '<i class="fas fa-copy" style="color: #ffffff;"></i>')
+      $("#ipfs-id-container").html('<span id="ipfs-id">' + identity.id + '</span>' + '&nbsp;&nbsp;' + '<i class="fas fa-copy text-warning"></i>')
     }
   })
 
