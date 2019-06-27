@@ -4,7 +4,7 @@
 
   // require and init store
   const Store = require('electron-store')
-  const store = new Store('peers')
+  var store = new Store('peers')
 
   // get list of peers from store
   var peers = store.get('peers')
@@ -27,14 +27,28 @@
   var addPeer = (event) => {
     event.preventDefault()
     var peer = $("#peer-hash").val()
-    if (peer.substring(0, 2) == 'Qm') { // input is a Qm hash
-      peers.push(peer)
-      store.set('peers', peers)
-      $("#peer-list").append(peerHtml(peer))
-      $("#peer-hash").val("")
-    } else { // input is not a Qm hash
-      alert("invalid peer hash")
-      $("#peer-hash").val("")
+    if (peers) {
+      if (peer.substring(0, 2) == 'Qm') { // input is a Qm hash
+        peers.push(peer)
+        store.set('peers', peers)
+        $("#peer-list").append(peerHtml(peer))
+        $("#peer-hash").val("")
+      } else { // input is not a Qm hash
+        alert("invalid peer hash")
+        $("#peer-hash").val("")
+      }
+    } else {
+      store = new Store('peers')
+      peers = store.get('peers')
+      if (peer.substring(0, 2) == 'Qm') { // input is a Qm hash
+        peers.push(peer)
+        store.set('peers', peers)
+        $("#peer-list").append(peerHtml(peer))
+        $("#peer-hash").val("")
+      } else { // input is not a Qm hash
+        alert("invalid peer hash")
+        $("#peer-hash").val("")
+      }
     }
   }
 
