@@ -14,7 +14,11 @@ var connect = (name) => {
       ipcRenderer.send('receiveMessage', data)
     })
     // listen for ipcRenderer sendMessage, then do:
-    // channel.sendTo(peer, message)
+    ipcRenderer.on('sendMessage', (event, data) => {
+        console.log(data)
+        channel.sendTo(data['to'], data['data'])
+        //console.log(data)
+    })
   })
 }
 

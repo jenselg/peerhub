@@ -2,7 +2,11 @@
 
   // require libs
   const { remote, ipcRenderer } = require('electron')
+
+  // variables
   const windowId = remote.getCurrentWindow().id
+  var peerIpfsId = remote.getCurrentWindow().getTitle()
+  console.log('PEER QmHash: ' + peerIpfsId)
 
   // sanitize inputs
   function stripHTML(dirtyString) {
@@ -26,27 +30,45 @@
 
   // build receive message
   var buildReceiveMessage = (input) => {
+    // let output = ''
+    // output += '<li class="list-group-item">'
+    //   output += '<strong>' + input['from'] + '</strong>' + ' says...' + '<br/>'
+    //   output += stripHTML(input['data'])
+    // output += '</li>'
+    // return output
     let output = ''
     output += '<li class="list-group-item">'
-      output += '<strong>' + input['from'] + '</strong>' + ' says...' + '<br/>'
-      output += stripHTML(input['data'])
+      output += '<div class="float-left">'
+        output += '<div style="padding: 5px; background: #E0E0E0; color: black; border-radius:.3rem; display: inline-block;">' + stripHTML(input['data']) + '</div>'
+        output += '<br/>'
+        output += '<div><small>' + currentTime()  + '</small></div>'
+      output += '</div>'
     output += '</li>'
     return output
   }
 
   // build send message
   var buildSendMessage = (input) => {
+    // let output = ''
+    // output += '<li class="list-group-item">'
+    //   output += '<strong>' + ipfsId + '</strong>' + ' says...' + '<br/>'
+    //   output += stripHTML(input['data'])
+    // output += '</li>'
+    // return output
     let output = ''
     output += '<li class="list-group-item">'
-      output += '<strong>' + input['from'] + '</strong>' + ' says...' + '<br/>'
-      output += stripHTML(input['data'])
+      output += '<div class="float-right" style="text-align: right;">'
+        output += '<div style="padding: 5px; background: #212121; color: white; border-radius:.3rem; display: inline-block;">' + stripHTML(input['data']) + '</div>'
+        output += '<br/>'
+        output += '<div style="text-align: right;"><small>' + currentTime()  + '</small></div>'
+      output += '</div>'
     output += '</li>'
     return output
   }
 
   // get id
   var ipfsId = remote.getGlobal('ipfsId')
-  console.log(ipfsId)
+  console.log('YOUR QmHash: ' + ipfsId)
 
   // call tempDataCapture()
   tempDataCapture()
@@ -66,7 +88,9 @@
   })
 
   // return time in pretty format
-  var currentTime = () => {}
+  var currentTime = () => {
+    return new Date().toLocaleString()
+  }
 
   // jquery events
   $(document).ready(() => {
@@ -92,11 +116,12 @@
     $("#message-input").on('keypress',function(e) {
       if(e.which == 13) {
         var data = {}
-        data['from'] = ipfsId
+        data['to'] = peerIpfsId
         data['data'] = $("#message-input").val()
         $("#messages-container").append(buildSendMessage(data))
         $("#messages-container").animate({ scrollTop: scrollTopHeightAdder(50) }, "slow");
-        ipcRenderer.send('sendMessage', $("#message-input").val())
+        ipcRenderer.send('sendMessage', data)
+        data = {}
         $("#message-input").val('')
       }
     })

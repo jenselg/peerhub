@@ -21,7 +21,7 @@ function createMainWindow () {
     }
   })
   mainWindow.loadFile('main.html')
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
   mainWindow.on('closed', function () {
     mainWindow = null
   })
@@ -43,7 +43,7 @@ function createPeerWindow (peerName, data) {
     }
   })
   peerWindow[peerName].loadFile('peer.html')
-  peerWindow[peerName].webContents.openDevTools()
+  //peerWindow[peerName].webContents.openDevTools()
 
   // Relay temp data to renderer if exists
   if (data) {
