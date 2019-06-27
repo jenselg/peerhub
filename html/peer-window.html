@@ -16,16 +16,9 @@
     return container.innerHTML; // innerHTML will be a xss safe string
   }
 
-  // Capture init data when a user sends a message then clear it
-  var tempDataCapture = () => {
-    try {
-      var tempData = remote.getGlobal('tempData')[windowId]
-      $("#messages-container").append(buildReceiveMessage(tempData))
-      //console.log(tempData)
-      ipcRenderer.send('clearTempData', windowId)
-    } catch (err) {
-      console.log('No temp data!')
-    }
+  // return time in pretty format
+  var currentTime = () => {
+    return new Date().toLocaleString()
   }
 
   // build receive message
@@ -39,7 +32,7 @@
     let output = ''
     output += '<li class="list-group-item">'
       output += '<div class="float-left">'
-        output += '<div style="padding: 5px; background: #E0E0E0; color: black; border-radius:.3rem; display: inline-block;">' + stripHTML(input['data']) + '</div>'
+        output += '<div style="padding: 5px; background: #E0E0E0; color: black; border-radius:.3rem; display: inline-block;">' + stripHTML(input['data'].toString()) + '</div>'
         output += '<br/>'
         output += '<div><small>' + currentTime()  + '</small></div>'
       output += '</div>'
@@ -66,12 +59,24 @@
     return output
   }
 
-  // get id
-  var ipfsId = remote.getGlobal('ipfsId')
-  console.log('YOUR QmHash: ' + ipfsId)
+  // Capture init data when a user sends a message then clear it
+  var tempDataCapture = () => {
+    try {
+      var tempData = remote.getGlobal('tempData')[windowId]
+      $("#messages-container").append(buildReceiveMessage(tempData))
+      //console.log(tempData)
+      ipcRenderer.send('clearTempData', windowId)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   // call tempDataCapture()
   tempDataCapture()
+
+  // get id
+  var ipfsId = remote.getGlobal('ipfsId')
+  console.log('YOUR QmHash: ' + ipfsId)
 
   // scrolltop to messages height; each message is 50px
   var scrollTopHeight = $("#messages-container").outerHeight()
@@ -86,11 +91,6 @@
       $("#messages-container").animate({ scrollTop: scrollTopHeightAdder(250) }, "slow");
       //console.log(data)
   })
-
-  // return time in pretty format
-  var currentTime = () => {
-    return new Date().toLocaleString()
-  }
 
   // jquery events
   $(document).ready(() => {
