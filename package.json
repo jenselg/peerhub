@@ -26,7 +26,7 @@
     "chokidar": "^2.1.2",
     "electron-store": "^2.0.0",
     "electron-window-manager": "^1.0.6",
-    "ipfs": "^0.34.4",
+    "ipfs": "^0.65.0",
     "ipfs-pubsub-room": "^1.4.1",
     "jquery": "^3.3.1",
     "knockout": "^3.5.0",
